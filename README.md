@@ -39,7 +39,8 @@ If you’d like to run this project locally:
 
 2. Install dependencies:
 
-npm install
+   ```bash
+   npm install
 
 3. Add your Supabase credentials:
 Create a .env file in the root directory and add:
@@ -48,8 +49,8 @@ VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-anon-key  
 
 4. Run in development mode:
-
-npm start
+   ```bash
+   npm start
 
 
 📬 Contact

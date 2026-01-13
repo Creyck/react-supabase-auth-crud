@@ -3,11 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("❌ Supabase env vars missing", {
-    supabaseUrl,
-    supabaseAnonKey,
-  });
-}
+console.log("SUPABASE URL:", supabaseUrl);
+console.log("SUPABASE KEY:", supabaseAnonKey);
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

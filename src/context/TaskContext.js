@@ -18,92 +18,108 @@ export const TaskContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
 
-  const getTasks = useCallback(async (done = false) => {
-    setLoading(true);
+const getTasks = useCallback(async (done = false) => {
+  setLoading(true);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data, error } = await supabase
-      .from("tasks")
-      .select()
-      .eq("userId", user.id)
-      .eq("done", done)
-      .order("id", { ascending: true });
-
-    if (error) {
-      console.error(error);
-    } else {
-      setTasks(data || []);
-    }
-
+  //* Si no hay usuario, no hacemos la consulta
+  if (!user) {
+    setTasks([]);
     setLoading(false);
-  }, []);
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("tasks")
+    .select()
+    .eq("userId", user.id)
+    .eq("done", done)
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error(error);
+  } else {
+    setTasks(data || []);
+  }
+
+  setLoading(false);
+}, []);
 
 //*Funcion para crear una nueva tarea
   const createTask = async (taskName) => {
-    setAdding(true);
+  setAdding(true);
 
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-      const { error } = await supabase.from("tasks").insert({
-        name: taskName,
-        userId: user.id,
-      });
+    if (!user) return; // 👈 evita crash si no hay sesión
 
-      if (error) throw error;
+    const { error } = await supabase.from("tasks").insert({
+      name: taskName,
+      userId: user.id,
+    });
 
-      await getTasks();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setAdding(false);
-    }
-  };
+    if (error) throw error;
+
+    await getTasks();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setAdding(false);
+  }
+};
+
 
   //* Eliminar tarea
   const deleteTask = async (id) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { error } = await supabase
-      .from("tasks")
-      .delete()
-      .eq("id", id)
-      .eq("userId", user.id);
+  if (!user) return;
 
-    if (error) {
-      console.error(error);
-      return;
-    }
+  const { error } = await supabase
+    .from("tasks")
+    .delete()
+    .eq("id", id)
+    .eq("userId", user.id);
 
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  setTasks(tasks.filter((task) => task.id !== id));
+};
+
 
   //* Actualizar tarea
   const updateTask = async (id, updateFields) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { error } = await supabase
-      .from("tasks")
-      .update(updateFields)
-      .eq("id", id)
-      .eq("userId", user.id);
+  if (!user) return;
 
-    if (error) {
-      console.error(error);
-      return;
-    }
+  const { error } = await supabase
+    .from("tasks")
+    .update(updateFields)
+    .eq("id", id)
+    .eq("userId", user.id);
 
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  setTasks(tasks.filter((task) => task.id !== id));
+};
+
 
   return (
     <TaskContext.Provider

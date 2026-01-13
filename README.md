@@ -7,7 +7,7 @@ It’s a practical demonstration of Supabase as a backend solution for authentic
 ---
 
 ## 🌐 Live Demo  
-👉 [Try it here](https://your-deployed-link.com)  (Aun por desplegar)
+👉 [Try it here](https://creycksimplecrud.netlify.app/login)
 
 ---
 
